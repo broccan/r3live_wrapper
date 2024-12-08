@@ -12,4 +12,6 @@ We need to check if the data points are synchronized as
              /velodyne_points                                               372 msgs    : sensor_msgs/PointCloud2
              /dji_osdk_ros/main_camera_images                              1122 msgs    : sensor_msgs/Image
 
-so we run this command rostopic hz /velodyne_points /dji_osdk_ros/main_camera_images
+so we run this command
+
+ rostopic hz /velodyne_points /dji_osdk_ros/main_camera_images
