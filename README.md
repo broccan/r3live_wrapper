@@ -15,3 +15,7 @@ We need to check if the data points are synchronized as
 so we run this command
 
  rostopic hz /velodyne_points /dji_osdk_ros/main_camera_images
+
+rosbag record -O snippet_with_bgr8.bag /velodyne_points /dji_osdk_ros/main_camera_images /dji_osdk_ros/main_camera_images_bgr8 /dji_osdk_ros/imu /tf
+
+saving the converted images to a new bag files 
