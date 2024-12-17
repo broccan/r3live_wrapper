@@ -32,24 +32,24 @@ Reason: R3LIVE requires images in the BGR format for texture and visual mapping.
 
 LiDAR Point Cloud:
 
-Input Topic: /velodyne_points
-Transformation:
-Strip unnecessary fields (ring and time) from the PointCloud2 messages.
-Retain only the x, y, z, and intensity fields.
-Adjust point_step and row_step to reflect the new point structure.
-Output Topic: /livox/lidar
-Reason: R3LIVE requires point cloud data with a simplified structure for LiDAR-based mapping.
+Input Topic: /velodyne_points<br />
+Transformation:<br />
+Strip unnecessary fields (ring and time) from the PointCloud2 messages.<br />
+Retain only the x, y, z, and intensity fields.<br />
+Adjust point_step and row_step to reflect the new point structure.<br />
+Output Topic: /livox/lidar<br />
+Reason: R3LIVE requires point cloud data with a simplified structure for LiDAR-based mapping.<br />
 IMU Data:
 
-Input Topic: /dji_osdk_ros/imu
-Transformation
-Retain only the header, angular_velocity, and linear_acceleration fields.
-Remove unused fields like orientation and covariance values.
-Output Topic: /livox/imu
-Reason: R3LIVE expects clean IMU data for accurate state estimation and fusion with visual and LiDAR inputs.
+Input Topic: /dji_osdk_ros/imu<br />
+Transformation<br />
+Retain only the header, angular_velocity, and linear_acceleration fields.<br />
+Remove unused fields like orientation and covariance values.<br />
+Output Topic: /livox/imu<br />
+Reason: R3LIVE expects clean IMU data for accurate state estimation and fusion with visual and LiDAR inputs.<br />
 
-Summary of Changes
-Data Type	Input Topic	Transformation	Output Topic
-Camera Images	/dji_osdk_ros/main_camera_images	Convert RGB → BGR	/camera/image_color
-LiDAR Point Cloud	/velodyne_points	Remove ring and time, keep x, y, z, intensity	/livox/lidar
-IMU Data	/dji_osdk_ros/imu	Retain header, angular_velocity, linear_acceleration	/livox/imu
+Transformation required<br />
+Data Type	Input Topic	Transformation	Output Topic<br />
+Camera Images	/dji_osdk_ros/main_camera_images	Convert RGB → BGR	/camera/image_color<br />
+LiDAR Point Cloud	/velodyne_points	Remove ring and time, keep x, y, z, intensity	/livox/lidar<br />
+IMU Data	/dji_osdk_ros/imu	Retain header, angular_velocity, linear_acceleration	/livox/imu<br />
