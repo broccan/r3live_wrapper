@@ -25,10 +25,10 @@ To use R3LIVE with the input ROS bag file with our bag files, the following tran
 
 Camera Images:<br />
 
-Input Topic: /dji_osdk_ros/main_camera_images
-Transformation: Convert images from RGB to BGR format.
-Output Topic: /camera/image_color
-Reason: R3LIVE requires images in the BGR format for texture and visual mapping.
+Input Topic: /dji_osdk_ros/main_camera_images<br />
+Transformation: Convert images from RGB to BGR format.<br />
+Output Topic: /camera/image_color<br />
+Reason: R3LIVE requires images in the BGR format for texture and visual mapping.<br />
 
 LiDAR Point Cloud:
 
