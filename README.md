@@ -75,3 +75,44 @@ To leverage GPU acceleration, install the [NVIDIA Container Toolkit](https://doc
 docker build -t ros-custom-image .
 docker run -it --rm --gpus all ros-custom-image
 ```
+
+## Data Conversion
+
+---
+
+### 1. **Point Cloud Conversion (`pointcloud_transfer_node.py`)**
+This script converts ROS `PointCloud2` messages (LiDAR data) into the format required by R3LIVE.
+
+#### Key Features:
+- Subscribes to the `/velodyne_points` topic (or any LiDAR topic).
+- Converts `PointCloud2` messages into a custom format.
+- Publishes the converted data to the `/livox/lidar` topic.
+
+#### Usage:
+```bash
+rosrun r3live_wrapper pointcloud_transfer_node.py
+```
+
+### 2. **IMU Conversion (`imu_transfer_node.py`)**
+This script converts ROS Imu messages (IMU data) into the format required by R3LIVE.
+
+#### Key Features:
+- Subscribes to the /dji_osdk_ros/imu topic (or any IMU topic).
+- Converts Imu messages into a custom format.
+- Publishes the converted data to the /livox/imu topic.
+#### Usage:
+```bash
+rosrun r3live_wrapper imu_transfer_node.py
+```
+
+### 3. **Image Conversion (`image_transfer_node.py`)**
+This script converts ROS `Image` messages (camera data) into the format required by R3LIVE.
+
+#### Key Features:
+- Subscribes to the /dji_osdk_ros/main_camera_images topic (or any camera topic).
+- Converts Image messages into a custom format.
+- Publishes the converted data to the /camera/image_color topic.
+#### Usage:
+```bash
+rosrun r3live_wrapper image_transfer_node.py
+```
