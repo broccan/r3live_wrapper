@@ -1,55 +1,77 @@
-"# ws24-lidar-camera-fusion" 
+## Introduction
 
-First Step is to convert rgb8 image to bgr8 by simultaneously running the bagfile and imageconversion.py file 
-then run this command to save the images rosrun image_view extract_images image:=/dji_osdk_ros/main_camera_images_bgr8 _filename_format:=frame_bgr_%04d.jpg
+[**R3LIVE**](https://github.com/hku-mars/r3live?tab=readme-ov-file) (Robust, Real-time, RGB-colored, LiDAR-Inertial-Visual tightly-coupled Estimation) is a state-of-the-art framework for real-time 3D mapping and localization. It tightly fuses data from LiDAR, inertial measurement units (IMUs), and RGB cameras to create dense, RGB-colored 3D maps of the environment. 
 
-as the  map doesn’t exist, ensure the static transform command is running:
+This repository provides a **wrapper package** that bridges the gap between custom ROS bags coming from our labs and R3LIVE. Our wrapper converts ROS bag files containing LiDAR, IMU, and camera data into a format that R3LIVE can process. This allows  to easily integrate their existing sensor data with R3LIVE for real-time mapping and localization.
 
-rosrun tf2_ros static_transform_publisher 0 0 0 0 0 0 map velodyne
+---
 
-We need to check if the data points are synchronized as 
+### Key Features of the Wrapper Package
+- **ROS Bag Conversion**: Converts LiDAR, IMU, and camera data from our ROS bags into R3LIVE-compatible formats.
+- **Sensor Synchronization**: Ensures proper synchronization of LiDAR, IMU, and camera data streams.
+---
 
-             /velodyne_points                                               372 msgs    : sensor_msgs/PointCloud2
-             /dji_osdk_ros/main_camera_images                              1122 msgs    : sensor_msgs/Image
+### Example Workflow
+1. **Record Sensor Data**: Use ROS to record LiDAR, IMU, and camera data into a ROS bag.
+2. **Convert Data**: Use our wrapper package to convert the ROS bag into R3LIVE-compatible formats.
+3. **Run R3LIVE**: Feed the converted data into R3LIVE for real-time 3D mapping and localization.
 
-so we run this command
+## Prerequisites
 
- rostopic hz /velodyne_points /dji_osdk_ros/main_camera_images
+To use this project, you need the following prerequisites:
 
-rosbag record -O snippet_with_bgr8.bag /velodyne_points /dji_osdk_ros/main_camera_images /dji_osdk_ros/main_camera_images_bgr8 /dji_osdk_ros/imu /tf
+---
 
-saving the converted images to a new bag files 
+### 1. **Docker**
+Install Docker on your system to build and run the containerized environment. Follow the official Docker installation guide for your operating system:
+- [Install Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+- [Install Docker on Windows](https://docs.docker.com/desktop/install/windows-install/)
+- [Install Docker on macOS](https://docs.docker.com/desktop/install/mac-install/)
 
-# Conversion of the bag file
-To use R3LIVE with the input ROS bag file with our bag files, the following transformations are necessary:
+---
 
-Camera Images:<br />
+### 2. **ROS Noetic (Optional)**
+If you prefer not to use Docker, you can set up ROS Noetic directly on your system. Follow the official ROS Noetic installation guide:
+- [ROS Noetic Installation](http://wiki.ros.org/noetic/Installation)
 
-Input Topic: /dji_osdk_ros/main_camera_images<br />
-Transformation: Convert images from RGB to BGR format.<br />
-Output Topic: /camera/image_color<br />
-Reason: R3LIVE requires images in the BGR format for texture and visual mapping.<br />
+---
 
-LiDAR Point Cloud:
+### 3. **Input Files**
+The following files are required to build and run the Docker container:
+- **`python_packages.txt`**: Lists Python packages and their versions.
+- **`requirements.txt`**: Lists system packages to install via `apt-get`.
+- **`repo_urls.txt`**: Contains the URLs of GitHub repositories to clone.
 
-Input Topic: /velodyne_points<br />
-Transformation:<br />
-Strip unnecessary fields (ring and time) from the PointCloud2 messages.<br />
-Retain only the x, y, z, and intensity fields.<br />
-Adjust point_step and row_step to reflect the new point structure.<br />
-Output Topic: /livox/lidar<br />
-Reason: R3LIVE requires point cloud data with a simplified structure for LiDAR-based mapping.<br />
-IMU Data:
+These files are automatically used by the Dockerfile to set up the environment.
 
-Input Topic: /dji_osdk_ros/imu<br />
-Transformation<br />
-Retain only the header, angular_velocity, and linear_acceleration fields.<br />
-Remove unused fields like orientation and covariance values.<br />
-Output Topic: /livox/imu<br />
-Reason: R3LIVE expects clean IMU data for accurate state estimation and fusion with visual and LiDAR inputs.<br />
+---
 
-Transformation required<br />
-Data Type	Input Topic	Transformation	Output Topic<br />
-Camera Images	/dji_osdk_ros/main_camera_images	Convert RGB → BGR	/camera/image_color<br />
-LiDAR Point Cloud	/velodyne_points	Remove ring and time, keep x, y, z, intensity	/livox/lidar<br />
-IMU Data	/dji_osdk_ros/imu	Retain header, angular_velocity, linear_acceleration	/livox/imu<br />
+### 4. **Dockerfile**
+The provided `Dockerfile` sets up a ROS Noetic environment with all necessary dependencies. It performs the following steps:
+- Installs system packages listed in `requirements.txt`.
+- Installs Python packages listed in `python_packages.txt`.
+- Clones GitHub repositories listed in `repo_urls.txt`.
+- Builds the ROS workspace using `catkin_make`.
+
+To build the Docker image, run:
+```bash
+docker build -t ros-custom-image .
+```
+To run the container, use:
+```bash
+docker run -it --rm ros-custom-image
+```
+### 5. Entrypoint Script
+The entrypoint.sh script is used to:
+
+- Source the ROS environment.
+- Source the catkin workspace.
+
+This script ensures that the ROS environment is properly set up when the container starts.
+
+### 6. NVIDIA GPU Support
+To leverage GPU acceleration, install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Then, build and run the Docker container with GPU support:
+```bash
+docker build -t ros-custom-image .
+docker run -it --rm --gpus all ros-custom-image
+```
