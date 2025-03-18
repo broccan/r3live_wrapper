@@ -1,0 +1,37 @@
+# Ignore ROS build artifacts
+build/
+devel/
+*.log
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+*.egg
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore virtual environments
+venv/
+env/
+*.venv/
+
+# Ignore ROS bag files (if not needed in the repo)
+*.bag
