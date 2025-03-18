@@ -116,3 +116,51 @@ This script converts ROS `Image` messages (camera data) into the format required
 ```bash
 rosrun r3live_wrapper image_transfer_node.py
 ```
+
+## Run an example
+#### enable docker gui:
+```bash
+sudo xhost +local:docker
+```
+### create docker container and run roscore and jupyter lab inside it:
+```bash
+sudo docker run -it --rm --name ros-jupyter \
+    -p 11311:11311 -p 8888:8888 \
+    -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
+    --net=host --runtime=nvidia \
+    noetic_ros_r3live:v1 /bin/bash
+
+tmux new-session -d -s ros "roscore"
+tmux new-session -d -s jupyter "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root"
+```
+### run the ros bag file:
+```bash 
+rosbag play snippet1.bag
+```
+### visualize the LiDAR data:
+```bash
+rosrun rviz rviz
+rosrun tf2_ros static_transform_publisher 0 0 0 0 0 0 body velodyne
+```
+![Alt Text](media/lidar.png)
+### visualize the camera data:
+```bash
+rqt_image_view
+```
+![Alt Text](media/camera.png)
+### running the bag wrapper node
+```bash
+rosrun r3live_wrapper bag_converter_node.py
+```
+### create the map
+```bash
+roslaunch r3live r3live_bag.launch
+```
+![Alt Text](media/mapping.png)
+### reconstruct and visualize the mesh
+```bash
+roslaunch r3live r3live_reconstruct_mesh.launch
+cd ${HOME}/r3live_output
+pcl_viewer rgb_pt.pcd
+meshlab textured_mesh.ply
+```
